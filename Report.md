@@ -36,3 +36,17 @@ On Linux, `ar rcs` usually handles both steps in one go.
 **Q3. Using `nm` on client_static**  
 When I run `nm` on `client_static`, functions like `mystrlen` do not show as external symbols, because their code is already copied inside the executable.  
 This shows that static linking makes the program self-contained — all needed code is included at compile time.
+
+###– Feature 5
+
+**Q1. What is a man page and why is it important?**  
+A man page is the standard Linux manual page. It provides usage, description, and author info.  
+It makes the project feel professional and easy to use.
+
+**Q2. What does the install target do?**  
+It copies the program into `/usr/local/bin` and the man page into `/usr/local/share/man/man1`.  
+This lets the program run from anywhere and its documentation be accessed with `man`.
+
+**Q3. Why create a release after this step?**  
+This marks the project’s final stable version with both code and documentation.  
+It makes it easy for others to download and use without setting up the repo.
