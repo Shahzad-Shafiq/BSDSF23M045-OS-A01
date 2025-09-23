@@ -3,24 +3,34 @@ SUBDIRS = src
 LIBDIR = lib
 OBJDIR = obj
 BINDIR = bin
-LIBNAME = libmyutils.a
-TARGET = $(BINDIR)/client_static
+STATICLIB = libmyutils.a
+DYNAMICLIB = libmyutils.so
+STATIC_TARGET = $(BINDIR)/client_static
+DYNAMIC_TARGET = $(BINDIR)/client_dynamic
 
-.PHONY: all clean $(SUBDIRS)
+.PHONY: all clean $(SUBDIRS) static dynamic
 
-all: $(SUBDIRS) $(LIBDIR)/$(LIBNAME)
-	@echo "Linking with static library..."
-	$(CC) $(OBJDIR)/main.o -L$(LIBDIR) -lmyutils -o $(TARGET)
+all: static dynamic
 
 $(SUBDIRS):
 	$(MAKE) -C $@
 
-# Rule to create the static library
-$(LIBDIR)/$(LIBNAME): $(OBJDIR)/mystrfunctions.o $(OBJDIR)/myfilefunctions.o
+# Static library
+$(LIBDIR)/$(STATICLIB): $(OBJDIR)/mystrfunctions.o $(OBJDIR)/myfilefunctions.o
 	ar rcs $@ $^
+
+static: $(SUBDIRS) $(LIBDIR)/$(STATICLIB)
+	$(CC) $(OBJDIR)/main.o -L$(LIBDIR) -lmyutils -o $(STATIC_TARGET)
+
+# Dynamic library
+$(LIBDIR)/$(DYNAMICLIB): $(OBJDIR)/mystrfunctions.o $(OBJDIR)/myfilefunctions.o
+	$(CC) -shared -o $@ $^
+
+dynamic: $(SUBDIRS) $(LIBDIR)/$(DYNAMICLIB)
+	$(CC) $(OBJDIR)/main.o -L$(LIBDIR) -lmyutils -o $(DYNAMIC_TARGET)
 
 clean:
 	@for dir in $(SUBDIRS); do \
 		$(MAKE) -C $$dir clean; \
 	done
-	rm -f $(LIBDIR)/$(LIBNAME) $(TARGET)
+	rm -f $(LIBDIR)/* $(BINDIR)/*
