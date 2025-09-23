@@ -1,18 +1,26 @@
 # Macros
 SUBDIRS = src
-TARGET = bin/client
+LIBDIR = lib
+OBJDIR = obj
+BINDIR = bin
+LIBNAME = libmyutils.a
+TARGET = $(BINDIR)/client_static
 
 .PHONY: all clean $(SUBDIRS)
 
-all: $(SUBDIRS)
-	@echo "Linking object files..."
-	$(CC) obj/*.o -o $(TARGET)
+all: $(SUBDIRS) $(LIBDIR)/$(LIBNAME)
+	@echo "Linking with static library..."
+	$(CC) $(OBJDIR)/main.o -L$(LIBDIR) -lmyutils -o $(TARGET)
 
 $(SUBDIRS):
 	$(MAKE) -C $@
+
+# Rule to create the static library
+$(LIBDIR)/$(LIBNAME): $(OBJDIR)/mystrfunctions.o $(OBJDIR)/myfilefunctions.o
+	ar rcs $@ $^
 
 clean:
 	@for dir in $(SUBDIRS); do \
 		$(MAKE) -C $$dir clean; \
 	done
-	rm -f $(TARGET)
+	rm -f $(LIBDIR)/$(LIBNAME) $(TARGET)
