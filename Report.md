@@ -36,3 +36,22 @@ On Linux, `ar rcs` usually handles both steps in one go.
 **Q3. Using `nm` on client_static**  
 When I run `nm` on `client_static`, functions like `mystrlen` do not show as external symbols, because their code is already copied inside the executable.  
 This shows that static linking makes the program self-contained — all needed code is included at compile time.
+
+###– Feature 4
+
+**Q1. What is -fPIC and why is it required?**  
+`-fPIC` makes position-independent code, which means the code can run from any memory address.  
+This is required for shared libraries because the operating system may load them at different places in memory for different programs.
+
+---
+
+**Q2. Why is there a file size difference between static and dynamic clients?**  
+The static client is larger because the library code is copied inside the executable.  
+The dynamic client is smaller because it only stores references, and the code is loaded from the `.so` at runtime.
+
+---
+
+**Q3. What is LD_LIBRARY_PATH and why did we set it?**  
+`LD_LIBRARY_PATH` tells the system where to look for shared libraries at runtime.  
+We had to set it so the loader could find our custom `libmyutils.so` in the `lib/` folder.  
+This shows the dynamic loader’s job is to locate and load shared libraries when a program starts.
